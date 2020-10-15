@@ -1,0 +1,22 @@
+.index{
+    .ant-row{
+        padding: 1rem;
+        box-sizing: border-box;
+        width: 100%;
+        .ant-col{
+            .ant-btn{
+                height: 20rem;
+                font-size: 2.5rem;
+                letter-spacing: .8rem;
+            }
+            @media screen and (min-width: 768px) {
+                .ant-btn{
+                    height: 10rem;
+                }
+            }
+            a{
+                color: white;
+            }
+        }
+    }
+}

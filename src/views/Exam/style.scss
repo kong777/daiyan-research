@@ -1,0 +1,25 @@
+.exam-info{
+    text-align: center;
+    padding: 8px;
+    padding-top: 40px;
+    .exam-item{
+        line-height: 32px;
+        font-size: 14px;
+        width: auto;
+        max-width: 140px;
+        margin: 0 auto;
+        text-align: left;
+        .exam-label{
+            display: inline-block;
+            margin-right: 8px;
+            font-weight: 600;
+        }
+        i{
+            display: inline-block;
+            margin-right: 8px;
+        }
+    }
+    .exam-btn{
+        margin-top: 24px;
+    }
+}

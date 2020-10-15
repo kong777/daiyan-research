@@ -1,0 +1,11 @@
+.question{
+    &.isChoosed{
+        color: yellowgreen;
+    }
+    &.isChecked{
+        color: red;
+    }
+    .options{
+        white-space: pre-wrap;
+    }
+}

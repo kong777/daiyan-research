@@ -1,0 +1,12 @@
+.option{
+    cursor: pointer;
+    &.isChoosed{
+        color: #1890ff;
+    }
+    &.isChecked.isChoosed{
+        color: red;
+    }
+    &.isChecked.isCorrect{
+        color: yellowgreen;
+    }
+}
