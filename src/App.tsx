@@ -5,7 +5,7 @@ import routes from './routes/index'
 function AppRouter() {
   return (
     <Router>
-      {routes.map(route => <Route key={route.name} {...route}/>)}
+      {routes.map((route, routeIndex) => <Route key={routeIndex} {...route}/>)}
     </Router>
   );
 }
