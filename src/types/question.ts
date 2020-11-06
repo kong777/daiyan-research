@@ -20,6 +20,10 @@ export interface IOption {
     is_false: number;
 }
 
+export interface IAnswerOptionList {
+    [index: number]: IOption[]
+}
+
 
 export interface IExaminationResultAnswer {
     examination_id: number;

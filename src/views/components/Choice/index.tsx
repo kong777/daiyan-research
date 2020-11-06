@@ -28,10 +28,11 @@ export interface IChoiceProps {
     onOptionConfirm?: onOptionConfirm;
     size?: number;
     onFinish?: onFinish;
+    defaultOptions?: IOption[]
 }
 
 const Choice: React.FC<IChoiceProps> = inject('store')(
-    observer(({isChecked: parentIsChecked, type, autoNext: parentAutoNext, store, dataAction, dataActiomParams, examQuestion, onCountChange, onOptionConfirm, count, size, onFinish}) => {
+    observer(({defaultOptions, isChecked: parentIsChecked, type, autoNext: parentAutoNext, store, dataAction, dataActiomParams, examQuestion, onCountChange, onOptionConfirm, count, size, onFinish}) => {
         // 获取题目
         const [ isEmpty, question, nextHandle, autoNextHandle ] = useQuestions(store!.getMenuId, dataAction, dataActiomParams, examQuestion, onCountChange, count, size, onFinish)
         // 自动生成判断题选项
@@ -67,6 +68,7 @@ const Choice: React.FC<IChoiceProps> = inject('store')(
                     <div className="choice-title">{question.id && `${question.id}. `}【{questionTypes[question.type] || '加载题目中...'}】</div>
                     <div className="choice-dry">{question?.question}</div>
                     <Options
+                        defaultOptions={defaultOptions}
                         options={options}
                         type={question.type}
                         isChecked={isChecked as boolean}
@@ -111,22 +113,36 @@ function useQuestions (menuId: number, dataAction?: IDataAction, dataActiomParam
     const [count, setCount] = useState(parentCount || 0)
     const [question, setQuestion] = useState({} as question)
     const [isEmpty, setIsEmpty] = useState(false)
+    const [isDisableNext, setIsdisableNext] = useState(false)
 
     useEffect(() => {
         if (examQuestion) {
             setQuestion(examQuestion)
+            setIsdisableNext(false)
+            setCount(count)
         } else {
             dataAction && dataAction(dataActiomParams).then(question => {
                 if (!question.data.total) {
                     setIsEmpty(true)
                 }
                 setQuestion(question.data.question)
+                setIsdisableNext(false)
             })
         }
     }, [count, menuId, dataAction, examQuestion, dataActiomParams])
 
     const nextHandle = () => {
-        const newCount = count + 1
+        let _count
+        if (parentCount !== undefined && parentCount !== count) {
+            _count = parentCount
+        } else {
+            _count = count
+        }
+        if (isDisableNext) {
+            return
+        }
+        setIsdisableNext(true)
+        const newCount = _count + 1
         if (size && size <= newCount) {
             onFinish && onFinish()
             return
@@ -166,7 +182,17 @@ function useOptions (question: question) {
         if (question.type === 0) {
             return answerTypes.map((v, i) => ({name: v, is_false: +(i !== +question.answer!) }))
         } else if (question.type === 2) {
-            return question.items && question.items.map(v => ({name: v, is_false: +(question.answer?.includes(v) || 1) }))
+            let _answer: string[] = []
+            if (typeof question.answer == 'string') {
+                _answer = [question.answer]
+            } else if (question.answer) {
+                _answer = question.answer
+            }
+            const result = question.items && question.items.map(v => {
+                debugger
+                return {name: v, is_false: +(_answer.find(n => n === v) || 1)}
+            })
+            return result
         } else {
             return question.items && question.items.map(v => ({name: v, is_false: +(v !== question.answer) }))
         }

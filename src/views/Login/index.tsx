@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { autoLogin } from '../../api/user'
 import { Result } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import qs from 'qs'
 import './style.scss'
 
@@ -20,7 +21,10 @@ const Queue: React.FC<ILoginProps> = (props: ILoginProps) => {
 
     const [isLogin, setIsLogin] = useState(false)
 
-    useEffect(() => {
+    const [isLoging, setIsLoging] = useState(false)
+
+    const clickHandle = () => {
+        setIsLoging(true)
         autoLogin().then(resp => {
             setIsLogin(true)
             const query = qs.parse(window.location.search.slice(1))
@@ -31,12 +35,22 @@ const Queue: React.FC<ILoginProps> = (props: ILoginProps) => {
         }).catch(error => {
             console.error(error)
         })
-        // eslint-disable-next-line
-    }, [])
+    }
+
+    const LoginTip = <Result
+        title="登录系统"
+        subTitle="请点击下方按钮，通过测试账号登录"
+        extra={
+            <Button className="loginBtn" size="large" type="primary" onClick={clickHandle}>
+                登录测试账号
+            </Button>
+        }
+    />
 
     return (
         <div className="login">
-            {isLogin ? LoginResult : LoadingIcon}
+            {isLoging && (isLogin ? LoginResult : LoadingIcon)}
+            {!isLoging && LoginTip}
         </div>
     )
 }

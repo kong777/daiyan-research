@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import Choice from '../components/Choice'
-import { question, IExaminationResultQuestion } from 'types/'
+import { question, IExaminationResultQuestion, IAnswerOptionList } from 'types/'
 import { getQuestionMenu, selfExamination, IExamination, reportSelfExamination, IExaminationAnswer, IReportSelfExaminationResult } from '../../api/question'
 import { onOptionConfirm } from '../components/Choice'
-import { Button } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { Button, Popover } from 'antd';
+import { EditOutlined, AppstoreOutlined } from '@ant-design/icons';
+import classNames from 'classnames';
 import './style.scss'
 
 export interface IExamProps {
@@ -15,7 +16,7 @@ const Exam: React.FC<IExamProps> = () => {
     const [questionList, examId] = useExam()
     const [count, setCount] = useState(0)
     const [step, setStep] = useState(0)
-    const [answerList, handleOptionConfirm] = useReportAnswer()
+    const [answerOptionList, answerList, handleOptionConfirm] = useReportAnswer()
     const [scoreInfo, setScoreInfo] = useState({} as IReportSelfExaminationResult)
 
     async function handleExamFinish () {
@@ -36,6 +37,21 @@ const Exam: React.FC<IExamProps> = () => {
         return Math.floor(used/60) + 1
         
     }
+
+    const questionListBlock = <div className="question-list">
+        {questionList.map((v, i) => {
+            const className = classNames(
+                'question-item',
+                {
+                    'done': answerList[v.id] !== undefined,
+                    'current': questionList[count] === v
+                }
+            )
+            return <div className={className} key={v.id} onClick={() => setCount(i)}>
+                {i + 1}
+            </div>
+        })}
+    </div>
 
     return (
         <div>
@@ -58,14 +74,21 @@ const Exam: React.FC<IExamProps> = () => {
             {step === 1 && (<div>
                 <Choice
                     type={2}
+                    defaultOptions={answerOptionList[questionList[count]?.id]}
                     isChecked={false}
                     autoNext={false}
+                    count={count}
                     examQuestion={questionList[count] as question}
                     onCountChange={(count: number) => setCount(count)}
                     onOptionConfirm={handleOptionConfirm}
                     size={questionList.length}
                     onFinish={handleExamFinish}
                 />
+                <div className="select-question">
+                    <Popover placement="bottomLeft" title="选择题目" content={questionListBlock} trigger="click">
+                        <Button type="primary" icon={<AppstoreOutlined />}></Button>
+                    </Popover>
+                </div>
             </div>)
             }
             {step === 2 && <div className="exam-info"   >
@@ -90,7 +113,7 @@ const Exam: React.FC<IExamProps> = () => {
 
 export type judgeOption = '正确' | '错误';
 
-const useReportAnswer = (): [ IExaminationAnswer[], onOptionConfirm ] => {
+const useReportAnswer = (): [ IAnswerOptionList, IExaminationAnswer[], onOptionConfirm ] => {
     function handleOptionConfirm (question: question, options: string[]) {
         let _options: IExaminationAnswer = question.type === 2 ? options : options.toString()
         if (!Array.isArray(_options) && question.type === 0) {
@@ -101,11 +124,19 @@ const useReportAnswer = (): [ IExaminationAnswer[], onOptionConfirm ] => {
             ...answerList,
             [question.id]: _options
         })
+        const answerOption = {
+            [question.id]: options.map(v => ({name: v, is_false: 0}))
+        } as IAnswerOptionList
+        setAnswerOptionList({
+            ...answerOptionList,
+            ...answerOption
+        })
     }
 
     const [answerList, setAnswerList] = useState([] as IExaminationAnswer[])
+    const [answerOptionList, setAnswerOptionList] = useState({} as IAnswerOptionList)
 
-    return [answerList, handleOptionConfirm]
+    return [answerOptionList, answerList, handleOptionConfirm]
 }
 
 const useExam = (): [IExaminationResultQuestion[], number] => {

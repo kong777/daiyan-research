@@ -14,6 +14,7 @@ type onChange = (answer: string[]) => void
 
 export interface IChoiceProps {
     options: IOption[];
+    defaultOptions?: IOption[]
     type: number;
     isChecked: boolean;
     answer: string | string[];
@@ -22,11 +23,19 @@ export interface IChoiceProps {
 }
 
 const Options: React.FC<IChoiceProps> = (props: IChoiceProps) => {
-    const {options, isChecked, type, answer, onChecked, onChange} = props
+    const {options, isChecked, type, answer, onChecked, onChange, defaultOptions} = props
 
     const [choosedOption, setChoosedOption, isCustomerCorrect] = useCustomerOption(answer, type, onChecked, isChecked, options)
 
     const className = classNames('options')
+
+    useEffect(() => {
+        if (defaultOptions && defaultOptions.length && onChange) {
+            onChange(defaultOptions.map(v => v.name))
+            setChoosedOption(defaultOptions)
+        }
+        // eslint-disable-next-line
+    }, [options])
 
     function handleOptionChoosed (option: IOption) {
         if (isChecked) return
@@ -46,13 +55,27 @@ const Options: React.FC<IChoiceProps> = (props: IChoiceProps) => {
     }
 
     function renderAnswer (answer: string | string[], customerAnswer: string[]) {
-        answer = typeof answer === 'string' ? answer : answer.join(', ')
-        answer = ['0', '1'].includes(answer) ? answerTypes[+answer] : answer
-        answer = answer.replace(/, /g, '\n')
-        return (<div>
-            <div>正确答案：{answer}</div>
-            <div>你的答案：{customerAnswer.join('\n')}</div>
-        </div>)
+        if (type === 2) {
+            answer = typeof answer === 'string' ? [answer] : answer
+            return (<div className="answer-container">
+                <div className="correct-answer">
+                    <div className="b">正确答案：</div>
+                    {answer.map(v => <p>{v}</p>)}
+                </div>
+                <div className="your-answer">
+                    <div className="b">你的答案：</div>
+                    {customerAnswer.map(v => <p>{v}</p>)}
+                </div>
+            </div>)
+        } else {
+            answer = typeof answer === 'string' ? answer : answer.join(', ')
+            answer = ['0', '1'].includes(answer) ? answerTypes[+answer] : answer
+            answer = answer.replace(/, /g, '\n')
+            return (<div className="answer-container">
+                <div className="correct-answer"><span className="b">正确答案：</span>{answer}</div>
+                <div className="your-answer"><span className="b">你的答案：</span>{customerAnswer.join('\n')}</div>
+            </div>)
+        }
     }
 
     return (

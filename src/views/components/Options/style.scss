@@ -1,11 +1,23 @@
-.question{
+.options{
+    white-space: pre-wrap;
     &.isChoosed{
         color: yellowgreen;
     }
     &.isChecked{
         color: red;
     }
-    .options{
-        white-space: pre-wrap;
+    .b{
+        font-weight: 700;
+    }
+    p{
+        margin: 0;
+    }
+    .answer-container{
+        padding-top: .5rem;
+        margin-top: 3rem;
+        border-top: 1px solid #ccc;
+        .your-answer, .correct-answer{
+            margin-top: 1rem;
+        }
     }
 }
