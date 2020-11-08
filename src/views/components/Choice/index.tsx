@@ -189,12 +189,11 @@ function useOptions (question: question) {
                 _answer = question.answer
             }
             const result = question.items && question.items.map(v => {
-                debugger
-                return {name: v, is_false: +(_answer.find(n => n === v) || 1)}
+                return {name: v, is_false: +(_answer.find(n => String(n) === String(v)) || 1)}
             })
             return result
         } else {
-            return question.items && question.items.map(v => ({name: v, is_false: +(v !== question.answer) }))
+            return question.items && question.items.map(v => ({name: v, is_false: +(String(v) !== String(question.answer)) }))
         }
     }
 

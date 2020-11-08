@@ -21,7 +21,7 @@ const Queue: React.FC<ILogoutProps> = (props: ILogoutProps) => {
             <Result
                 status="success"
                 title="登出成功"
-                subTitle="您已成功登录，正在自动跳转!"
+                subTitle="您已成功登出，正在自动跳转!"
             />
         </div>
     )

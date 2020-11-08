@@ -1,8 +1,11 @@
 .d-menu{
+    padding-top: constant(safe-area-inset-top);
+    padding-top: env(safe-area-inset-top);
     background-color: #1890ff;
-    overflow: hidden;
     display: flex;
     justify-content: space-around;
+    flex-grow: 0;
+    flex-shrink: 0;
     .d-menu-left, .d-menu-right{
         min-width: 6rem;
     }

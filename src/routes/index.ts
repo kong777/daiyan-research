@@ -18,7 +18,6 @@ export interface IRoute extends RouteProps {
 
 const routes: IRoute[] = [
   {hide: true, path: '*', component: Menu},
-  {hide: true, path: '*', component: Footer},
   {hide: true, name: '菜单', path: '/', component: Home, exact: true},
   {name: '顺序做题', path: '/queue', component: Queue},
   {name: '随机做题', path: '/random', component: Random},
@@ -27,6 +26,7 @@ const routes: IRoute[] = [
   {name: '模拟考试', path: '/exam', component: Exam},
   {hide: true, name: '登录系统', path: '/login', component: Login},
   {name: '退出登录', path: '/Logout', component: Logout},
+  {hide: true, path: '*', component: Footer},
 ]
 
 export default routes
