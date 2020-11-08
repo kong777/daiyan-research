@@ -85,7 +85,11 @@ class AppMenu extends Component<IMenuProps, IMenuState> {
                     </Menu>
                 </Drawer>
                 <div className="d-menu-right">
-                    {this.injected.store.user?.token && <Button className="exchange" size="large" type="primary" onClick={() => { this.injected.store.openMenu() }}>
+                    {this.injected.store.user?.token &&
+                    this.injected.location.pathname !== '/login' &&
+                    this.injected.location.pathname !== '/exam' &&
+                    this.injected.location.pathname !== '/logout' &&
+                    <Button className="exchange" size="large" type="primary" onClick={() => { this.injected.store.openMenu() }}>
                         <InteractionFilled style={{transform: 'scale(1.4)'}} />
                     </Button>}
                 </div>
